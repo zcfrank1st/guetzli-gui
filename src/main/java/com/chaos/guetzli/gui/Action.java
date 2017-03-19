@@ -71,6 +71,7 @@ public class Action {
     }
 
     private void transformOneFile (File file) {
+        result.setText("开始压缩文件，请耐心等待...");
         ProcessBuilder builder = new ProcessBuilder();
         List<String> command = new ArrayList<>();
         command.add(System.getProperty("user.dir") + "/guetzli");
@@ -78,8 +79,6 @@ public class Action {
         command.add(file.getAbsolutePath() + ".compress.jpg");
         builder.command(command);
         try {
-            // TODO 展示修改
-            result.setText("开始压缩文件，请耐心等待...");
             Process p = builder.start();
             int status = p.waitFor();
             if (0 == status) {
