@@ -53,46 +53,42 @@ public class Action {
                         transformOneFile(f);
                     }
                 } else {
-                    makeAlert("ERROR", "需要转换目录为空!");
+                    makeErrorAlert("需要转换目录为空!");
                 }
             }
         } else {
-            makeAlert("ERROR", "打开路劲为空!");
+            makeErrorAlert("打开路劲为空!");
         }
     }
 
-    private void makeAlert (String title, String content) {
+    private void makeErrorAlert(String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
+        alert.setTitle("ERROR");
         alert.setHeaderText(null);
         alert.setContentText(content);
 
         alert.showAndWait();
     }
 
-    private void transformOneFile (File file) throws IOException {
+    private void transformOneFile (File file) {
         ProcessBuilder builder = new ProcessBuilder();
         List<String> command = new ArrayList<>();
         command.add(System.getProperty("user.dir") + "/guetzli");
         command.add(file.getAbsolutePath());
         command.add(file.getAbsolutePath() + ".compress.jpg");
         builder.command(command);
-        builder.redirectErrorStream(true);
-        Process p = builder.start();
-
-        output(p.getInputStream());
-
-        // TODO 优化转化展示
-    }
-
-    private void output(InputStream inputStream) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append(System.getProperty("line.separator"));
-                result.setText(sb.toString());
+        try {
+            // TODO 展示修改
+            result.setText("开始压缩文件，请耐心等待...");
+            Process p = builder.start();
+            int status = p.waitFor();
+            if (0 == status) {
+                result.setText("压缩文件成功!");
             }
+        } catch (IOException | InterruptedException e) {
+            result.setText("执行失败!");
         }
+
+
     }
 }
