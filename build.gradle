@@ -1,0 +1,50 @@
+buildscript {
+    dependencies {
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.7.0'
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.8'
+    id "us.kirchmeier.capsule" version "1.0.2"
+}
+
+lombok {
+    version = "1.16.12"
+}
+
+group 'com.chaos'
+version '1.0'
+
+apply plugin: 'java'
+apply plugin: 'javafx-gradle-plugin'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile 'com.google.guava:guava:19.0'
+    compile 'com.typesafe:config:1.3.1'
+}
+
+
+jfx {
+    // minimal requirement for jfxJar-task
+    mainClass = 'com.chaos.guetzli.gui.Guetzli'
+
+    //jfxNative
+    vendor = 'com.chao.guetzli.gui'
+    appName = "Guetzli-gui"
+    nativeReleaseVersion = "1.0"
+    bundler = "ALL"
+}
+
+task fatCapsule(type: FatCapsule) {
+    applicationClass 'com.chaos.guetzli.gui.Guetzli'
+}
