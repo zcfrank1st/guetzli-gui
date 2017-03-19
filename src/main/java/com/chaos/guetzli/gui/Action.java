@@ -57,7 +57,7 @@ public class Action {
                 }
             }
         } else {
-            makeErrorAlert("打开路劲为空!");
+            makeErrorAlert("打开路径为空!");
         }
     }
 
