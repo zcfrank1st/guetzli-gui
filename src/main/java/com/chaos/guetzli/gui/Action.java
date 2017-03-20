@@ -79,29 +79,25 @@ public class Action {
     }
 
     private void transformOneFile (File file) throws ExecutionException, InterruptedException {
-        Task<Integer> compressTask = new Task<Integer>() {
+        Task compressTask = new Task<Void>() {
             @Override
-            protected Integer call() throws Exception {
-                int status = -1;
-                try {
-                    ProcessBuilder builder = new ProcessBuilder();
-                    List<String> command = new ArrayList<>();
-                    command.add(System.getProperty("user.dir") + "/guetzli");
-                    command.add(file.getAbsolutePath());
-                    command.add(file.getAbsolutePath() + ".compress.jpg");
-                    builder.command(command);
+            protected Void call() throws Exception {
 
-                    Process p = builder.start();
-                    status = p.waitFor();
-                    if (0 == status) {
-                        finish.setText("压缩文件成功!");
-                    }
-                } catch (IOException | InterruptedException e) {
-                    finish.setText("执行失败!");
-                }
-                return status;
+                ProcessBuilder builder = new ProcessBuilder();
+                List<String> command = new ArrayList<>();
+                command.add(System.getProperty("user.dir") + "/guetzli");
+                command.add(file.getAbsolutePath());
+                command.add(file.getAbsolutePath() + ".compress.jpg");
+                builder.command(command);
+
+                Process p = builder.start();
+                p.waitFor();
+                return null;
             }
         };
-        compressTask.run();
+        compressTask.setOnFailed((stat) -> finish.setText("压缩转换执行失败!"));
+        compressTask.setOnSucceeded((stat) -> finish.setText("压缩转换执行成功!"));
+
+        new Thread(compressTask).start();
     }
 }
