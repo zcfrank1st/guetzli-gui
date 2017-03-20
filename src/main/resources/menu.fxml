@@ -8,7 +8,7 @@
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chaos.guetzli.gui.Action">
       <children>
       <Button layoutX="6.0" layoutY="7.0" mnemonicParsing="false" onAction="#chooseFile" prefHeight="27.0" prefWidth="83.0" text="打开文件" />
-      <Button layoutX="6.0" layoutY="95.0" mnemonicParsing="false" onAction="#transform" prefHeight="27.0" prefWidth="83.0" text="压缩" />
+      <Button fx:id="transformButton" layoutX="6.0" layoutY="95.0" mnemonicParsing="false" onAction="#transform" prefHeight="27.0" prefWidth="83.0" text="压缩" />
       <Label fx:id="path" layoutX="6.0" layoutY="42.0" prefHeight="27.0" prefWidth="440.0" />
       <Separator layoutX="6.0" layoutY="78.0" prefHeight="5.0" prefWidth="440.0" />
       <Button layoutX="102.0" layoutY="7.0" mnemonicParsing="false" onAction="#chooseDir" prefHeight="27.0" prefWidth="83.0" text="打开目录" />

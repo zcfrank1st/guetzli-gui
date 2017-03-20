@@ -1,9 +1,9 @@
 package com.chaos.guetzli.gui;
 
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -24,6 +24,8 @@ public class Action {
     private Label finish;
     @FXML
     private Label path;
+    @FXML
+    private Button transformButton;
 
     @FXML
     private void chooseDir() {
@@ -47,7 +49,8 @@ public class Action {
 
     @FXML
     private void transform() throws IOException, ExecutionException, InterruptedException {
-        Platform.runLater(() -> start.setText("开始压缩文件，请耐心等待..."));
+        start.setText("开始压缩文件，请耐心等待...");
+        transformButton.setDisable(true);
 
         String pathString = path.getText();
         if (!pathString.isEmpty()) {
@@ -82,7 +85,6 @@ public class Action {
         Task compressTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-
                 ProcessBuilder builder = new ProcessBuilder();
                 List<String> command = new ArrayList<>();
                 command.add(System.getProperty("user.dir") + "/guetzli");
@@ -95,8 +97,14 @@ public class Action {
                 return null;
             }
         };
-        compressTask.setOnFailed((stat) -> finish.setText("压缩转换执行失败!"));
-        compressTask.setOnSucceeded((stat) -> finish.setText("压缩转换执行成功!"));
+        compressTask.setOnFailed((stat) -> {
+            finish.setText("压缩转换执行失败!");
+            transformButton.setDisable(false);
+        });
+        compressTask.setOnSucceeded((stat) -> {
+            finish.setText("压缩转换执行成功!");
+            transformButton.setDisable(false);
+        });
 
         new Thread(compressTask).start();
     }
