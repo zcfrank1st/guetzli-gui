@@ -1,6 +1,7 @@
 package com.chaos.guetzli.gui;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -46,7 +47,7 @@ public class Action {
 
     @FXML
     private void transform() throws IOException, ExecutionException, InterruptedException {
-        start.setText("开始压缩文件，请耐心等待...");
+        Platform.runLater(() -> start.setText("开始压缩文件，请耐心等待..."));
 
         String pathString = path.getText();
         if (!pathString.isEmpty()) {
@@ -78,22 +79,29 @@ public class Action {
     }
 
     private void transformOneFile (File file) throws ExecutionException, InterruptedException {
-        Platform.runLater(() -> {
-            ProcessBuilder builder = new ProcessBuilder();
-            List<String> command = new ArrayList<>();
-            command.add(System.getProperty("user.dir") + "/guetzli");
-            command.add(file.getAbsolutePath());
-            command.add(file.getAbsolutePath() + ".compress.jpg");
-            builder.command(command);
-            try {
-                Process p = builder.start();
-                int status = p.waitFor();
-                if (0 == status) {
-                    finish.setText("压缩文件成功!");
+        Task<Integer> compressTask = new Task<Integer>() {
+            @Override
+            protected Integer call() throws Exception {
+                int status = -1;
+                try {
+                    ProcessBuilder builder = new ProcessBuilder();
+                    List<String> command = new ArrayList<>();
+                    command.add(System.getProperty("user.dir") + "/guetzli");
+                    command.add(file.getAbsolutePath());
+                    command.add(file.getAbsolutePath() + ".compress.jpg");
+                    builder.command(command);
+
+                    Process p = builder.start();
+                    status = p.waitFor();
+                    if (0 == status) {
+                        finish.setText("压缩文件成功!");
+                    }
+                } catch (IOException | InterruptedException e) {
+                    finish.setText("执行失败!");
                 }
-            } catch (IOException | InterruptedException e) {
-                finish.setText("执行失败!");
+                return status;
             }
-        });
+        };
+        compressTask.run();
     }
 }
