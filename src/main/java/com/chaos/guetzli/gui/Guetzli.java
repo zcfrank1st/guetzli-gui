@@ -17,7 +17,7 @@ public class Guetzli extends Application {
 
         primaryStage.setTitle("Guetzli Mac Gui");
         primaryStage.getIcons().add(new Image(ClassLoader.getSystemResource("sun.jpg").toExternalForm()));
-        primaryStage.setScene(new Scene(root, 450, 500));
+        primaryStage.setScene(new Scene(root, 450, 200));
         primaryStage.setResizable(false);
         primaryStage.show();
     }

@@ -1,21 +1,26 @@
 package com.chaos.guetzli.gui;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by zcfrank1st on 18/03/2017.
  */
 public class Action {
     @FXML
-    private Label result;
+    private Label start;
+    @FXML
+    private Label finish;
     @FXML
     private Label path;
 
@@ -40,7 +45,9 @@ public class Action {
     }
 
     @FXML
-    private void transform() throws IOException {
+    private void transform() throws IOException, ExecutionException, InterruptedException {
+        start.setText("开始压缩文件，请耐心等待...");
+
         String pathString = path.getText();
         if (!pathString.isEmpty()) {
             File fileOrDir = new File(pathString);
@@ -70,24 +77,23 @@ public class Action {
         alert.showAndWait();
     }
 
-    private void transformOneFile (File file) {
-        result.setText("开始压缩文件，请耐心等待...");
-        ProcessBuilder builder = new ProcessBuilder();
-        List<String> command = new ArrayList<>();
-        command.add(System.getProperty("user.dir") + "/guetzli");
-        command.add(file.getAbsolutePath());
-        command.add(file.getAbsolutePath() + ".compress.jpg");
-        builder.command(command);
-        try {
-            Process p = builder.start();
-            int status = p.waitFor();
-            if (0 == status) {
-                result.setText("压缩文件成功!");
+    private void transformOneFile (File file) throws ExecutionException, InterruptedException {
+        Platform.runLater(() -> {
+            ProcessBuilder builder = new ProcessBuilder();
+            List<String> command = new ArrayList<>();
+            command.add(System.getProperty("user.dir") + "/guetzli");
+            command.add(file.getAbsolutePath());
+            command.add(file.getAbsolutePath() + ".compress.jpg");
+            builder.command(command);
+            try {
+                Process p = builder.start();
+                int status = p.waitFor();
+                if (0 == status) {
+                    finish.setText("压缩文件成功!");
+                }
+            } catch (IOException | InterruptedException e) {
+                finish.setText("执行失败!");
             }
-        } catch (IOException | InterruptedException e) {
-            result.setText("执行失败!");
-        }
-
-
+        });
     }
 }
