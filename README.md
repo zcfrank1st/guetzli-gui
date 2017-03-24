@@ -1,4 +1,10 @@
 Guetzli-Gui
 ====
 
-A mac app for google guetzli command shell
+A mac app for picture compress.
+
+depend libraries
+
+*guetzli*
+
+*pngquant*
