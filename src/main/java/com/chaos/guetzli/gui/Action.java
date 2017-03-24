@@ -4,6 +4,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -28,6 +29,13 @@ public class Action {
     private Button transformButton;
 
     @FXML
+    private CheckBox jpg;
+    @FXML
+    private CheckBox png;
+
+    private int type = 0; // 0:jpg  1:png
+
+    @FXML
     private void chooseDir() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         File directory = directoryChooser.showDialog(null);
@@ -48,6 +56,31 @@ public class Action {
     }
 
     @FXML
+    private void jpgCheck() {
+        if (ifChecked()) {
+            transformButton.setDisable(false);
+            png.setSelected(false);
+        } else {
+            transformButton.setDisable(true);
+        }
+    }
+
+    @FXML
+    private void pngCheck() {
+        if (ifChecked()) {
+            transformButton.setDisable(false);
+            type = 1;
+            jpg.setSelected(false);
+        } else {
+            transformButton.setDisable(true);
+        }
+    }
+
+    private boolean ifChecked() {
+        return jpg.isSelected() || png.isSelected();
+    }
+
+    @FXML
     private void transform() throws IOException, ExecutionException, InterruptedException {
         start.setText("开始压缩文件，请耐心等待...");
         transformButton.setDisable(true);
@@ -56,12 +89,12 @@ public class Action {
         if (!pathString.isEmpty()) {
             File fileOrDir = new File(pathString);
             if (fileOrDir.isFile()) {
-                transformOneFile(fileOrDir);
+                transformOneFile(fileOrDir, type);
             } else {
                 File[] files = fileOrDir.listFiles();
                 if (files != null) {
                     for (File f : files) {
-                        transformOneFile(f);
+                        transformOneFile(f, type);
                     }
                 } else {
                     makeErrorAlert("需要转换目录为空!");
@@ -81,15 +114,21 @@ public class Action {
         alert.showAndWait();
     }
 
-    private void transformOneFile (File file) throws ExecutionException, InterruptedException {
-        Task compressTask = new Task<Void>() {
+    private void transformOneFile (File file, int type) throws ExecutionException, InterruptedException {
+        Task compressJpgTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 ProcessBuilder builder = new ProcessBuilder();
                 List<String> command = new ArrayList<>();
-                command.add(System.getProperty("user.dir") + "/guetzli");
-                command.add(file.getAbsolutePath());
-                command.add(file.getAbsolutePath() + ".compress.jpg");
+
+                if (0 == type) {
+                    command.add(System.getProperty("user.dir") + "/guetzli");
+                    command.add(file.getAbsolutePath());
+                    command.add(file.getAbsolutePath() + ".compress.jpg");
+                } else {
+                    command.add(System.getProperty("user.dir") + "/pngquant");
+                    command.add(file.getAbsolutePath());
+                }
                 builder.command(command);
 
                 Process p = builder.start();
@@ -97,15 +136,15 @@ public class Action {
                 return null;
             }
         };
-        compressTask.setOnFailed((stat) -> {
+        compressJpgTask.setOnFailed((stat) -> {
             finish.setText("压缩转换执行失败!");
             transformButton.setDisable(false);
         });
-        compressTask.setOnSucceeded((stat) -> {
+        compressJpgTask.setOnSucceeded((stat) -> {
             finish.setText("压缩转换执行成功!");
             transformButton.setDisable(false);
         });
 
-        new Thread(compressTask).start();
+        new Thread(compressJpgTask).start();
     }
 }

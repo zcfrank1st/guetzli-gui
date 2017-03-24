@@ -15,7 +15,7 @@ public class Guetzli extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(ClassLoader.getSystemResource("menu.fxml"));
 
-        primaryStage.setTitle("Guetzli Mac Gui");
+        primaryStage.setTitle("Guetzli Gui");
         primaryStage.getIcons().add(new Image(ClassLoader.getSystemResource("sun.jpg").toExternalForm()));
         primaryStage.setScene(new Scene(root, 450, 200));
         primaryStage.setResizable(false);
