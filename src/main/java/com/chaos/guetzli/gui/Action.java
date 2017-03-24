@@ -37,6 +37,8 @@ public class Action {
 
     @FXML
     private void chooseDir() {
+        start.setText("");
+        finish.setText("");
         DirectoryChooser directoryChooser = new DirectoryChooser();
         File directory = directoryChooser.showDialog(null);
 
@@ -47,6 +49,8 @@ public class Action {
 
     @FXML
     private void chooseFile() {
+        start.setText("");
+        finish.setText("");
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(null);
 
@@ -59,6 +63,7 @@ public class Action {
     private void jpgCheck() {
         if (ifChecked()) {
             transformButton.setDisable(false);
+            type = 0;
             png.setSelected(false);
         } else {
             transformButton.setDisable(true);
@@ -123,7 +128,7 @@ public class Action {
                 if (0 == type) {
                     command.add(System.getProperty("user.dir") + File.separator + "guetzli");
                     command.add(file.getAbsolutePath());
-                    command.add(file.getAbsolutePath() + ".compress.jpg");
+                    command.add(file.getAbsolutePath() + ".guetzli.jpg");
                 } else {
                     command.add(System.getProperty("user.dir") + File.separator + "pngquant");
                     command.add(file.getAbsolutePath());
