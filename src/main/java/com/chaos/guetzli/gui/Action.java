@@ -82,11 +82,10 @@ public class Action {
 
     @FXML
     private void transform() throws IOException, ExecutionException, InterruptedException {
-        start.setText("开始压缩文件，请耐心等待...");
-        transformButton.setDisable(true);
-
         String pathString = path.getText();
         if (!pathString.isEmpty()) {
+            start.setText("开始压缩文件，请耐心等待...");
+            transformButton.setDisable(true);
             File fileOrDir = new File(pathString);
             if (fileOrDir.isFile()) {
                 transformOneFile(fileOrDir, type);
@@ -122,11 +121,11 @@ public class Action {
                 List<String> command = new ArrayList<>();
 
                 if (0 == type) {
-                    command.add(System.getProperty("user.dir") + "/guetzli");
+                    command.add(System.getProperty("user.dir") + File.separator + "guetzli");
                     command.add(file.getAbsolutePath());
                     command.add(file.getAbsolutePath() + ".compress.jpg");
                 } else {
-                    command.add(System.getProperty("user.dir") + "/pngquant");
+                    command.add(System.getProperty("user.dir") + File.separator + "pngquant");
                     command.add(file.getAbsolutePath());
                 }
                 builder.command(command);
